@@ -27,9 +27,18 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
+import { Brain, BookOpen, MessageSquare, Lightbulb, Zap, Palette, Microscope, Volume2 } from "lucide-react";
+
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: Brain, label: "Concept Simplifier", path: "/concept-simplifier" },
+  { icon: BookOpen, label: "Quiz Generator", path: "/quiz-generator" },
+  { icon: MessageSquare, label: "Doubt Solver", path: "/doubt-solver" },
+  { icon: Lightbulb, label: "Story Mode", path: "/story-mode" },
+  { icon: Zap, label: "Lesson Planner", path: "/lesson-planner" },
+  { icon: Palette, label: "AI Whiteboard", path: "/whiteboard" },
+  { icon: Microscope, label: "Activity Guide", path: "/activity-guide" },
+  { icon: Volume2, label: "Translation", path: "/translation" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
