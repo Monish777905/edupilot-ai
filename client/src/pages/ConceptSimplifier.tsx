@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Streamdown } from "streamdown";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 
 export default function ConceptSimplifier() {
   const [topic, setTopic] = useState("");
@@ -13,12 +15,15 @@ export default function ConceptSimplifier() {
   const [language, setLanguage] = useState<"en" | "hi" | "hinglish">("hinglish");
 
   const generateMutation = trpc.conceptSimplifier.generateExplanation.useMutation();
-  const historyQuery = trpc.conceptSimplifier.getHistory.useQuery();
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
-    await generateMutation.mutateAsync({ topic, gradeLevel, language });
+    await generateMutation.mutateAsync({ topic, depthLevel: gradeLevel as "beginner" | "intermediate" | "advanced", language });
     setTopic("");
+  };
+
+  const handleVoiceInput = (text: string) => {
+    setTopic(text);
   };
 
   return (
@@ -36,12 +41,20 @@ export default function ConceptSimplifier() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Topic</label>
-              <Input
-                placeholder="e.g., Photosynthesis"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="e.g., Photosynthesis"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <VoiceRecorder
+                  onTranscribed={handleVoiceInput}
+                  language={language}
+                  placeholder="Speak your topic..."
+                />
+              </div>
             </div>
 
             <div>
@@ -86,31 +99,46 @@ export default function ConceptSimplifier() {
         {/* Output Panel */}
         <div className="lg:col-span-2 space-y-6">
           {generateMutation.data && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{generateMutation.data.topic}</CardTitle>
-                <CardDescription>
-                  {generateMutation.data.gradeLevel} level explanation
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Explanation</h3>
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Explanation</span>
+                    <VoicePlayer
+                      text={generateMutation.data.explanation || ""}
+                      language={language}
+                    />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <Streamdown>{generateMutation.data.explanation}</Streamdown>
-                </div>
+                </CardContent>
+              </Card>
 
-                {generateMutation.data.keyPoints && generateMutation.data.keyPoints.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold mb-2">Key Points</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                      {generateMutation.data.keyPoints.map((point, i) => (
-                        <li key={i} className="text-sm text-slate-700">{point}</li>
+              {generateMutation.data.keyPoints && generateMutation.data.keyPoints.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Key Points</span>
+                      <VoicePlayer
+                        text={generateMutation.data.keyPoints.join(". ")}
+                        language={language}
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {generateMutation.data.keyPoints.map((point: string, idx: number) => (
+                        <li key={idx} className="flex gap-3">
+                          <span className="text-blue-600 font-bold min-w-fit">•</span>
+                          <span>{point}</span>
+                        </li>
                       ))}
                     </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           )}
 
           {generateMutation.error && (

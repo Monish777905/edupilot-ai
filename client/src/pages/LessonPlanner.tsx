@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Clock, BookOpen, Lightbulb } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 
 export default function LessonPlanner() {
@@ -24,6 +26,10 @@ export default function LessonPlanner() {
     });
   };
 
+  const handleVoiceInput = (text: string) => {
+    setTopic(text);
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">Lesson Planner</h1>
@@ -37,12 +43,20 @@ export default function LessonPlanner() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Topic</label>
-              <Input
-                placeholder="e.g., Fractions"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="e.g., Fractions"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <VoiceRecorder
+                  onTranscribed={handleVoiceInput}
+                  language={language}
+                  placeholder="Speak your topic..."
+                />
+              </div>
             </div>
 
             <div>
@@ -87,7 +101,7 @@ export default function LessonPlanner() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {generateMutation.data.learningObjectives?.map((obj: any, idx: number) => (
+                    {(generateMutation.data.lessonPlan || "").split("\n").slice(0, 3).map((obj: string, idx: number) => (
                       <li key={idx} className="flex gap-2">
                         <span className="text-blue-600">•</span>
                         <span>{obj}</span>

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Zap } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 
 export default function ActivityGuide() {
@@ -16,6 +18,10 @@ export default function ActivityGuide() {
   const handleGenerate = async () => {
     if (!topic.trim()) return;
     await generateMutation.mutateAsync({ topic, gradeLevel, activityType });
+  };
+
+  const handleVoiceInput = (text: string) => {
+    setTopic(text);
   };
 
   return (
@@ -31,12 +37,19 @@ export default function ActivityGuide() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Topic</label>
-              <Input
-                placeholder="e.g., Ecosystems"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="e.g., Ecosystems"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <VoiceRecorder
+                  onTranscribed={handleVoiceInput}
+                  placeholder="Speak your topic..."
+                />
+              </div>
             </div>
 
             <div>
@@ -81,11 +94,11 @@ export default function ActivityGuide() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="w-5 h-5" />
-                  {generateMutation.data.title}
+                  {generateMutation.data.activityType}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-slate-700">{generateMutation.data.description}</p>
+                <p className="text-slate-700">{generateMutation.data.activity}</p>
               </CardContent>
             </Card>
           )}

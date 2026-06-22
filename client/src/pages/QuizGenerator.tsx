@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Progress } from "@/components/ui/progress";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 
 export default function QuizGenerator() {
   const [topic, setTopic] = useState("");
@@ -46,6 +48,16 @@ export default function QuizGenerator() {
       ...prev,
       [questionId]: answer,
     }));
+  };
+
+  const handleVoiceTopicInput = (text: string) => {
+    setTopic(text);
+  };
+
+  const handleVoiceAnswer = (text: string) => {
+    if (currentQuestion) {
+      handleAnswerChange(currentQuestion.id, text);
+    }
   };
 
   const handleNext = () => {

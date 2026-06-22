@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Send } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 import { Streamdown } from "streamdown";
 
@@ -31,6 +33,14 @@ export default function DoubtSolver() {
     setMessage("");
   };
 
+  const handleVoiceTopicInput = (text: string) => {
+    setTopic(text);
+  };
+
+  const handleVoiceMessageInput = (text: string) => {
+    setMessage(text);
+  };
+
   if (!chatStarted) {
     return (
       <div className="p-8 max-w-2xl mx-auto">
@@ -43,10 +53,16 @@ export default function DoubtSolver() {
             <CardDescription>Enter a topic or subject area</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Input
-              placeholder="e.g., Photosynthesis, Fractions, World War II"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+            <div className="flex gap-2">
+              <Input
+                placeholder="e.g., Photosynthesis, Fractions, World War II"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+              />
+            </div>
+            <VoiceRecorder
+              onTranscribed={handleVoiceTopicInput}
+              placeholder="Speak your topic..."
             />
             <Button
               onClick={handleStartChat}
@@ -77,19 +93,25 @@ export default function DoubtSolver() {
             </div>
           ))}
         </CardContent>
-        <div className="border-t p-4 flex gap-2">
-          <Input
-            placeholder="Type your question..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+        <div className="border-t p-4 space-y-2">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Type your question..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            />
+            <Button
+              onClick={handleSendMessage}
+              disabled={!message.trim() || addMessageMutation.isPending}
+            >
+              {addMessageMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            </Button>
+          </div>
+          <VoiceRecorder
+            onTranscribed={handleVoiceMessageInput}
+            placeholder="Speak your question..."
           />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!message.trim() || addMessageMutation.isPending}
-          >
-            {addMessageMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </Button>
         </div>
       </Card>
     </div>

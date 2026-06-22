@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Image as ImageIcon } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 
 export default function Whiteboard() {
@@ -15,6 +17,10 @@ export default function Whiteboard() {
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     await generateMutation.mutateAsync({ prompt, contentType });
+  };
+
+  const handleVoiceInput = (text: string) => {
+    setPrompt(text);
   };
 
   return (
@@ -30,12 +36,19 @@ export default function Whiteboard() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Prompt</label>
-              <Input
-                placeholder="Describe what to draw..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="Describe what to draw..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <VoiceRecorder
+                  onTranscribed={handleVoiceInput}
+                  placeholder="Speak your prompt..."
+                />
+              </div>
             </div>
 
             <div>
@@ -74,7 +87,7 @@ export default function Whiteboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <img src={generateMutation.data.imageUrl} alt="Generated" className="w-full rounded-lg" />
+                <img src={(generateMutation.data.imageUrl as any)?.url || generateMutation.data.imageUrl || ""} alt="Generated" className="w-full rounded-lg" />
               </CardContent>
             </Card>
           )}

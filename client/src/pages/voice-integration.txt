@@ -1,0 +1,24 @@
+// Voice integration pattern for all modules:
+// 1. Import VoiceRecorder and VoicePlayer at top
+// 2. Add handleVoiceInput handlers for text inputs
+// 3. Add VoiceRecorder components for input fields
+// 4. Add VoicePlayer components for output text
+// 5. Pass language prop to both components
+
+// Example for input:
+const handleVoiceInput = (text: string) => {
+  setInputField(text);
+};
+
+// In JSX:
+<VoiceRecorder
+  onTranscribed={handleVoiceInput}
+  language={language}
+  placeholder="Speak here..."
+/>
+
+// Example for output:
+<VoicePlayer
+  text={outputText}
+  language={language}
+/>

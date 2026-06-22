@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ArrowRightLeft } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 
 export default function Translation() {
@@ -21,6 +23,10 @@ export default function Translation() {
   const handleSwapLanguages = () => {
     setSourceLanguage(targetLanguage);
     setTargetLanguage(sourceLanguage);
+  };
+
+  const handleVoiceInput = (voiceText: string) => {
+    setText(voiceText);
   };
 
   return (
@@ -44,12 +50,17 @@ export default function Translation() {
               </SelectContent>
             </Select>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <Textarea
               placeholder="Enter text to translate..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="min-h-64"
+            />
+            <VoiceRecorder
+              onTranscribed={handleVoiceInput}
+              language={sourceLanguage}
+              placeholder="Speak text to translate..."
             />
           </CardContent>
         </Card>
@@ -69,10 +80,16 @@ export default function Translation() {
               </SelectContent>
             </Select>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <div className="min-h-64 p-3 border rounded-md bg-slate-50">
               {translateMutation.data?.translatedText || "Translation will appear here..."}
             </div>
+            {translateMutation.data?.translatedText && (
+              <VoicePlayer
+                text={translateMutation.data.translatedText}
+                language={targetLanguage}
+              />
+            )}
           </CardContent>
         </Card>
       </div>

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import VoicePlayer from "@/components/VoicePlayer";
 import { trpc } from "@/lib/trpc";
 import { Streamdown } from "streamdown";
 
@@ -19,6 +21,10 @@ export default function StoryMode() {
     await generateMutation.mutateAsync({ topic, gradeLevel, language });
   };
 
+  const handleVoiceInput = (text: string) => {
+    setTopic(text);
+  };
+
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">Story Mode</h1>
@@ -32,12 +38,20 @@ export default function StoryMode() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm font-medium">Topic</label>
-              <Input
-                placeholder="e.g., The Water Cycle"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="e.g., The Water Cycle"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <VoiceRecorder
+                  onTranscribed={handleVoiceInput}
+                  language={language}
+                  placeholder="Speak your topic..."
+                />
+              </div>
             </div>
 
             <div>
@@ -83,10 +97,10 @@ export default function StoryMode() {
           {generateMutation.data && (
             <Card>
               <CardHeader>
-                <CardTitle>{generateMutation.data.storyTitle}</CardTitle>
+                <CardTitle>{generateMutation.data.topic}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Streamdown>{generateMutation.data.storyContent}</Streamdown>
+                <Streamdown>{generateMutation.data.story}</Streamdown>
               </CardContent>
             </Card>
           )}
