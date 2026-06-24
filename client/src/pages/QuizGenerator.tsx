@@ -242,7 +242,14 @@ export default function QuizGenerator() {
           <Progress value={progress} className="mb-4" />
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-semibold mb-4">{currentQuestion.question}</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold flex-1">{currentQuestion.question}</h2>
+                <VoicePlayer
+                  text={currentQuestion.question}
+                  language={language}
+                  showVolume={false}
+                />
+              </div>
 
               {currentQuestion.type === "mcq" && currentQuestion.options ? (
                 <RadioGroup

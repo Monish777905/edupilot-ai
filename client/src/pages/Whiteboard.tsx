@@ -6,11 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import VoicePlayer from "@/components/VoicePlayer";
+import WhiteboardCanvas from "./WhiteboardCanvas";
 import { trpc } from "@/lib/trpc";
 
 export default function Whiteboard() {
   const [prompt, setPrompt] = useState("");
   const [contentType, setContentType] = useState<"diagram" | "concept-map" | "flowchart" | "illustration">("diagram");
+  const [canvasDataUrl, setCanvasDataUrl] = useState<string | null>(null);
 
   const generateMutation = trpc.whiteboard.generateContent.useMutation();
 
@@ -21,6 +23,27 @@ export default function Whiteboard() {
 
   const handleVoiceInput = (text: string) => {
     setPrompt(text);
+  };
+
+  const handleCanvasSave = (dataUrl: string) => {
+    setCanvasDataUrl(dataUrl);
+  };
+
+  const downloadCanvas = () => {
+    if (!canvasDataUrl) return;
+    const link = document.createElement("a");
+    link.href = canvasDataUrl;
+    link.download = `whiteboard-${Date.now()}.png`;
+    link.click();
+  };
+
+  const downloadAIImage = () => {
+    if (!generateMutation.data?.imageUrl) return;
+    const imageUrl = (generateMutation.data.imageUrl as any)?.url || generateMutation.data.imageUrl;
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = `ai-diagram-${Date.now()}.png`;
+    link.click();
   };
 
   return (
@@ -74,16 +97,48 @@ export default function Whiteboard() {
               {generateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Generate
             </Button>
+
+            {canvasDataUrl && (
+              <Button
+                onClick={downloadCanvas}
+                variant="outline"
+                className="w-full"
+                size="sm"
+              >
+                Download Canvas (PNG)
+              </Button>
+            )}
+
+            {generateMutation.data?.imageUrl && (
+              <Button
+                onClick={downloadAIImage}
+                variant="outline"
+                className="w-full"
+                size="sm"
+              >
+                Download AI Image (PNG)
+              </Button>
+            )}
           </CardContent>
         </Card>
 
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Drawing Canvas</CardTitle>
+              <CardDescription>Draw, annotate, and create diagrams</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WhiteboardCanvas width={600} height={500} onSave={handleCanvasSave} />
+            </CardContent>
+          </Card>
+
           {generateMutation.data?.imageUrl && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ImageIcon className="w-5 h-5" />
-                  Generated Content
+                  AI Generated Content
                 </CardTitle>
               </CardHeader>
               <CardContent>

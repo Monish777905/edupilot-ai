@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { 
   Brain, 
   BookOpen, 
@@ -10,7 +11,9 @@ import {
   Palette, 
   Microscope, 
   Volume2,
-  ArrowRight 
+  ArrowRight,
+  Maximize2,
+  Minimize2
 } from "lucide-react";
 
 const modules = [
@@ -74,14 +77,50 @@ const modules = [
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!isFullscreen) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error("Fullscreen error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
       {/* Header */}
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-slate-900 mb-2">EduPilot AI</h1>
-        <p className="text-lg text-slate-600">Voice-Enabled Classroom Co-Pilot</p>
-        <p className="text-sm text-slate-500 mt-2">Select a module to get started with your lesson</p>
+      <div className="mb-12 flex justify-between items-start">
+        <div>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">EduPilot AI</h1>
+          <p className="text-lg text-slate-600">Voice-Enabled Classroom Co-Pilot</p>
+          <p className="text-sm text-slate-500 mt-2">Select a module to get started with your lesson</p>
+        </div>
+        <Button
+          onClick={toggleFullscreen}
+          variant="outline"
+          size="lg"
+          className="gap-2"
+          title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen mode"}
+        >
+          {isFullscreen ? (
+            <>
+              <Minimize2 className="w-5 h-5" />
+              Exit Fullscreen
+            </>
+          ) : (
+            <>
+              <Maximize2 className="w-5 h-5" />
+              Fullscreen
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Modules Grid */}
