@@ -80,20 +80,20 @@
 - [x] Add comprehension questions after stories
 
 ## Phase 10: Lesson Plan Generator Module
-- [ ] Create lesson plan input form (topic, grade, duration)
-- [ ] Implement structured lesson plan generation
-- [ ] Add learning objectives display
-- [ ] Implement teaching flow visualization
-- [ ] Add activities and quiz suggestions
-- [ ] Create homework suggestions
+- [x] Create lesson plan input form (topic, grade, duration)
+- [x] Implement structured lesson plan generation
+- [x] Add learning objectives display
+- [x] Implement teaching flow visualization
+- [x] Add activities and quiz suggestions
+- [x] Create homework suggestions
 - [ ] Add export functionality (PDF, text)
 - [ ] Implement lesson plan templates
 
 ## Phase 11: Activity Guide Module
-- [ ] Create activity suggestion interface
-- [ ] Implement activity generation based on topic and grade
-- [ ] Add hands-on experiment suggestions
-- [ ] Create group discussion prompts
+- [x] Create activity suggestion interface
+- [x] Implement activity generation based on topic and grade
+- [x] Add hands-on experiment suggestions
+- [x] Create group discussion prompts
 - [ ] Implement visual progress tracker
 - [ ] Add animated countdown timer
 - [ ] Create completion status display
